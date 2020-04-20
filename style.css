@@ -1,0 +1,35 @@
+body {
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva,
+    Verdana, sans-serif;
+  text-align: center;
+  background-color: #303036;
+  padding-top: 50px;
+}
+
+svg {
+  background-color: white;
+  box-shadow: 5px 5px 20px black;
+}
+
+.bar {
+  fill: #fc5130;
+}
+
+.bar:hover {
+  fill: #30bced;
+}
+
+#title {
+  width: 100%;
+  text-anchor: middle;
+}
+
+#tooltip {
+  position: absolute;
+  text-align: center;
+  width: 150px;
+  height: 2.2em;
+  padding: 5px;
+  background: white;
+  box-shadow: 0 0 5px black;
+}
