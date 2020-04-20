@@ -1,9 +1,9 @@
 body {
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva,
-    Verdana, sans-serif;
+  /* font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif; */
+  font-family: Arial, Helvetica, sans-serif;
   text-align: center;
   background-color: #303036;
-  padding-top: 50px;
+  padding-top: 5em;
 }
 
 svg {

@@ -1,13 +1,20 @@
-const w = 800;
-const h = 400;
-const padding = 50;
-
-const svg = d3.select(".canvas").append("svg").attr("width", w).attr("height", h);
+// convert "yyyy-mm-dd" to "yyyy Qx"
+const dateToQuarter = (date) => {
+  let year = date.substring(0, 4);
+  let month = date.substring(5, 7);
+  let quarters = { "01": "Q1", "04": "Q2", "07": "Q3", "10": "Q4" };
+  return year + " " + quarters[month];
+};
 
 // margins and dimensions
-const margin = { top: 20, right: 20, bottom: 30, left: 50 };
+const w = 800;
+const h = 500;
+const margin = { top: 20, right: 20, bottom: 50, left: 50 };
 const graphWidth = w - margin.left - margin.right;
 const graphHeight = h - margin.top - margin.bottom;
+
+// main svg
+const svg = d3.select(".canvas").append("svg").attr("width", w).attr("height", h);
 
 // create graph area
 const graph = svg
@@ -17,15 +24,14 @@ const graph = svg
   .style("border", "1px solid blue")
   .attr("transform", `translate(${margin.left}, ${margin.top})`); // move it by margin sizes
 
-// add tool tip div
+// tool tip div
 const tooltip = d3.select(".canvas").append("div").attr("id", "tooltip").style("opacity", 0);
 
-// add title
+// title
 graph
   .append("text")
   .attr("id", "title")
   .attr("x", graphWidth / 2 - 20)
-  // .attr("x", padding)
   .attr("y", margin.top)
   .text("United States GDP")
   .style("font-weight", "bold")
@@ -40,20 +46,15 @@ document.addEventListener("DOMContentLoaded", () => {
       // calculate the highest and lowest date
       const minDate = new Date(d3.min(dataset, (d) => d[0]));
       const maxDate = new Date(d3.max(dataset, (d) => d[0]));
-      const minY = d3.min(dataset, (d) => d[1]);
+
+      // calculate the highest GDP value
       const maxY = d3.max(dataset, (d) => d[1]);
 
       // define the xScale using dates
       const timeScale = d3.scaleTime().domain([minDate, maxDate]).range([0, graphWidth]);
       const yScale = d3.scaleLinear().domain([0, maxY]).range([graphHeight, 0]);
-      // .range([h - padding, padding]);
 
-      // console.log("bandWidth: " + xScale.bandwidth);
-      console.log(`xScale of '2010-07-01': ${timeScale(new Date("2010-07-01"))}`);
-      console.log(`xScale of '1947-01-01': ${timeScale(new Date("1947-01-01"))}`);
-      console.log(`xScale of '2015-07-01': ${timeScale(new Date("2015-07-01"))}`);
-
-      /* bars */
+      // graph bars
       graph
         .selectAll("rect")
         .data(dataset)
@@ -63,14 +64,15 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("x", (d, i) => timeScale(new Date(d[0])))
         .attr("y", (d, i) => yScale(d[1]))
         .attr("width", graphWidth / dataset.length)
-        .attr("height", (d, i) => graphHeight - yScale(d[1]))
-        .attr("data-date", (d, i) => d[0])
-        .attr("data-gdp", (d, i) => d[1])
+        .attr("height", (d) => graphHeight - yScale(d[1]))
+        .attr("data-date", (d) => d[0])
+        .attr("data-gdp", (d) => d[1])
         .on("mouseover", (d) => {
           tooltip.attr("data-date", d[0]).attr("data-gdp", d[1]);
           tooltip.transition().duration(100).style("opacity", 0.9);
           tooltip
-            .html(`${d[0]}<br>$${d[1]} Billion`)
+            .html(`${dateToQuarter(d[0])}<br>$${d[1]} Billion`)
+            // place tooltip to the upper-right of the mouse cursor
             .style("left", d3.event.pageX + 20 + "px")
             .style("top", d3.event.pageY - 20 + "px");
         })
@@ -88,10 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("transform", `translate(0, ${graphHeight})`)
         .call(xAxis);
 
-      graph
-        .append("g")
-        .attr("id", "y-axis")
-        // .attr("transform", "translate(" + margin.left + ", " + margin.top + ")") // move it 'padding' distance from the left
-        .call(yAxis);
+      graph.append("g").attr("id", "y-axis").call(yAxis);
     });
 });
